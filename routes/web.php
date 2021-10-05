@@ -16,12 +16,24 @@ use App\Models\Post;
 
 Route::get('/', function () {
     return view('posts', [
-        'posts' => Post::all()
+        'posts' => Post::latest()->get()
     ]);
 });
 
-Route::get('posts/{post}', function ($slug) {
+Route::get('posts/{post:slug}', function (Post $post) {
     return view('post', [
-        'post' => Post::findOrFail($slug)
+        'post' => $post
+    ]);
+});
+
+Route::get('category/{category:slug}', function (\App\Models\Category $category){
+    return view('posts', [
+        'posts' => $category->posts
+    ]);
+});
+
+Route::get('author/{author:username}', function (\App\Models\User $author){
+    return view('posts', [
+        'posts' => $author->posts
     ]);
 });
