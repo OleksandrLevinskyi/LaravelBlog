@@ -9,14 +9,23 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $guarded=[
+    protected $guarded = [
         'id'
     ];
 
-    protected $with=[
+    protected $with = [
         'author',
         'category'
     ];
+
+    public function scopeFilter($query, $filters)
+    {
+        $searchFilter = $filters['search'];
+
+        $query->when($searchFilter, fn($query, $search) => $query
+            ->where('title', 'like', '%' . $searchFilter . '%')
+            ->orWhere('body', 'like', '%' . $searchFilter . '%'));
+    }
 
     public function category()
     {
@@ -25,6 +34,6 @@ class Post extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
